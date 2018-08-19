@@ -1,0 +1,5 @@
+﻿  w3.cpp
+c:\users\bobsa\desktop\oop 345\workshop\lab3\lab3\w3.cpp(24): warning C4267: 'argument': conversion from 'size_t' to 'int', possible loss of data
+  c:\users\bobsa\desktop\oop 345\workshop\lab3\lab3\w3.cpp(85): note: see reference to function template instantiation 'void display<std::string,double,5>(const std::string &,const KVList<std::string,double,5> &,int)' being compiled
+c:\users\bobsa\desktop\oop 345\workshop\lab3\lab3\w3.cpp(25): warning C4267: 'argument': conversion from 'size_t' to 'int', possible loss of data
+  lab3.vcxproj -> C:\Users\bobsa\Desktop\OOP 345\Workshop\Lab3\x64\Debug\Lab3.exe

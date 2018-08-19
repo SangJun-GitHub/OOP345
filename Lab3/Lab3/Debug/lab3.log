@@ -1,0 +1,6 @@
+﻿  w3.cpp
+c:\users\bobsa\desktop\lab3\lab3\kvlist.h(38): warning C4715: 'KVList<std::basic_string<char,std::char_traits<char>,std::allocator<char> >,double,5>::value': not all control paths return a value
+c:\users\bobsa\desktop\lab3\lab3\kvlist.h(33): warning C4715: 'KVList<std::basic_string<char,std::char_traits<char>,std::allocator<char> >,double,5>::key': not all control paths return a value
+c:\users\bobsa\desktop\lab3\lab3\kvlist.h(38): warning C4715: 'KVList<std::basic_string<char,std::char_traits<char>,std::allocator<char> >,std::basic_string<char,std::char_traits<char>,std::allocator<char> >,5>::value': not all control paths return a value
+c:\users\bobsa\desktop\lab3\lab3\kvlist.h(33): warning C4715: 'KVList<std::basic_string<char,std::char_traits<char>,std::allocator<char> >,std::basic_string<char,std::char_traits<char>,std::allocator<char> >,5>::key': not all control paths return a value
+  lab3.vcxproj -> C:\Users\bobsa\Desktop\lab3\Debug\Lab3.exe
