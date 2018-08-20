@@ -1,0 +1,243 @@
+Script started on Thu 09 Aug 2018 03:52:31 PM EDT
+]0;sjpark24@mtrx-node03pd:~/oop345/w7[?1034h[sjpark24@mtrx-node03pd w7]$ exitg++ -o w7 w7.cpp Product.cpp Sale.cpp[14@std= "c++0x" -[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[Ccat *.h *.cpp[K[7Pwhoami
+sjpark24
+]0;sjpark24@mtrx-node03pd:~/oop345/w7[sjpark24@mtrx-node03pd w7]$ whoami[2Pexitg++ -o w7 w7.cpp Product.cpp Sale.cpp[14@std= "c++0x" -[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[Ccat *.h *.cpp[K
+/**********************************
+| Subject        : Workshop 6     |
+| Name           : Sang Jun Park  |
+| Student number : 112293170      |
+| Date           : 2018.8.09      |
+**********************************/
+
+#ifndef W7_IPRODUCT_H
+#define W7_IPRODUCT_H
+
+#include <iostream>
+#include <fstream>
+
+namespace w7 
+{
+	class iProduct 
+	{
+	public:
+		virtual double getCharge() const = 0;
+		virtual void display(std::ostream& os) const = 0;
+	};
+
+	class Product : public iProduct
+	{
+	private:
+		unsigned int productNum;
+		double productCost;
+
+	public:
+		Product(const unsigned int _producNum, const double _productCost);
+		
+		double getCharge() const;
+		void display(std::ostream& os) const;
+	};
+
+	class TaxableProduct : public iProduct 
+	{
+	private:
+		unsigned int productNum;
+		double productCost;
+		char taxType;
+
+	public:
+		TaxableProduct(const unsigned int _producNum, const double _productCost, const char _taxType);
+		
+		double getCharge() const;
+		void display(std::ostream& os) const;
+	};
+
+	std::ostream& operator<<(std::ostream& os, const iProduct& product);
+	iProduct* readProduct(std::ifstream& is);
+}
+#endif/**********************************
+| Subject        : Workshop 6     |
+| Name           : Sang Jun Park  |
+| Student number : 112293170      |
+| Date           : 2018.8.09      |
+**********************************/
+
+#include <iostream>
+#include <fstream>
+#include <string>
+#include <vector>
+#include <iomanip>
+#include "iProduct.h"
+
+namespace w7 
+{
+	class Sale 
+	{
+	private:
+		std::vector<iProduct*> products;
+
+	public:
+		Sale(const char* fileName);
+		void display(std::ostream& os);
+	};
+}/**********************************
+| Subject        : Workshop 6     |
+| Name           : Sang Jun Park  |
+| Student number : 112293170      |
+| Date           : 2018.8.09      |
+**********************************/
+
+#include <iostream>
+#include <fstream>
+#include <iomanip>
+#include "iProduct.h"
+
+namespace w7 
+{
+	Product::Product(const unsigned int _productNum, const double _productCost)
+	{
+		productNum = _productNum;
+		productCost = _productCost;
+	}
+
+	double Product::getCharge() const 
+	{
+		return productCost;
+	}
+
+	void Product::display(std::ostream& os) const 
+	{
+		os << std::setw(10) << std::right;
+		os << productNum;
+		os << std::setw(10) << std::right;
+		os << productCost << '\n';
+	}
+
+	TaxableProduct::TaxableProduct(const unsigned int _productNum, const double _productCost, const char _taxType)
+	{
+		productNum = _productNum;
+		productCost = _productCost;
+		taxType = _taxType;
+	}
+
+	double TaxableProduct::getCharge() const 
+	{
+		double taxRate = 1;
+		if (taxType == 'H') {
+			taxRate = 1.13;
+		} else if(taxType == 'P') {
+			taxRate = 1.08;
+		}
+		return productCost * taxRate;
+	}
+
+	void TaxableProduct::display(std::ostream& os) const 
+	{
+		os << std::setw(10) << std::right << productNum << std::setw(10) << std::right << productCost;
+		os << ' ';
+		if (taxType == 'H') {
+			os << "HST";
+		} else if(taxType == 'P') {
+			os << "PST";
+		}
+		os << '\n';
+	}
+
+	std::ostream& operator<<(std::ostream& os, const iProduct& product) {
+		product.display(os);
+		return os;
+	}
+
+	iProduct* readProduct(std::ifstream& is) {
+		int _productNum;
+		double _productCost;
+		char _taxType;
+
+		is >> _productNum >> _productCost;
+		if (is.get() != '\n') {
+			is.get(_taxType);
+			return new TaxableProduct(_productNum, _productCost, _taxType);
+		} else {
+			return new Product(_productNum, _productCost);
+		}
+	}
+}/**********************************
+| Subject        : Workshop 6     |
+| Name           : Sang Jun Park  |
+| Student number : 112293170      |
+| Date           : 2018.8.09      |
+**********************************/
+
+#include <iostream>
+#include <fstream>
+#include <string>
+#include <vector>
+#include <iomanip>
+#include "iProduct.h"
+#include "Sale.h"
+
+namespace w7 
+{
+	Sale::Sale(const char* fileName) 
+	{
+		std::ifstream file(fileName);
+		while (file.good()) 
+		{
+			iProduct* iproduct = readProduct(file);
+			products.push_back(iproduct);
+		}
+	}
+
+	void Sale::display(std::ostream& os) 
+	{
+		float totalCost = 0;
+		os << "Product No      Cost Taxable\n";
+		os << std::fixed << std::setprecision(2);
+
+		for (auto product : products) 
+		{
+			os << *product;
+			totalCost += product->getCharge();
+		}
+		os << "Total" << std::setw(10) << std::right << totalCost << '\n';
+	}
+}/**********************************
+| Subject        : Workshop 6     |
+| Name           : Sang Jun Park  |
+| Student number : 112293170      |
+| Date           : 2018.8.09      |
+**********************************/
+
+#include <iostream>
+#include <string>
+#include "Sale.h"
+
+int main(int argc, char** argv) {
+	if (argc != 2) {
+		std::cerr << argv[0] << ": incorrect number of arguments\n";
+		std::cerr << "Usage: " << argv[0] << " file_name\n";
+		return 1;
+	}
+
+	w7::Sale sale(argv[1]);
+	sale.display(std::cout);
+
+	std::cout << "\nPress any key to continue ... ";
+	std::cin.get();
+}]0;sjpark24@mtrx-node03pd:~/oop345/w7[sjpark24@mtrx-node03pd w7]$ cat *.h *.cpp[7Pwhoami[2Pexitg++ -o w7 w7.cpp Product.cpp Sale.cpp[14@std= "c++0x" -[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[1P
+]0;sjpark24@mtrx-node03pd:~/oop345/w7[sjpark24@mtrx-node03pd w7]$ g++ -std="c++0x" -o w7 w7.cpp Product.cpp Sale.cpp[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[Ccat *.h *.cpp[K[7Pwhoamicat *.h *.cpp[7Pwhoami[2Pexitg++ -o w7 w7.cpp Product.cpp Sale.cpp[14@std= "c++0x" -[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[Ccat *.h *.cpp[K[7Pwhoami[2Pexit7]$ g++ -std= "c++0x" -o w7 w7g++ -std="c++0x" -o w7 w7.cpp Product.cpp Sale.cppg++ -std=="c++0x" -o w7 w7.cpp Product.cpp Sale.cpp.cpp Product.cpp Sale.cpp[A[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[37Pg++ -std= "c++0x" -o w7 w7.cpp Product.cpp Sale.cpp
+[K[A[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[Ccat *.h *.cpp[K[7Pwhoamig++ -o w7 w7.cpp Product.cpp Sale.cpp[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[24Pcat *.h *.cpp[7Pwhoamiscript w7.txt[8Pclearscript w7.txt[8Pclearscript w7.txt[8Pclearscript w7.txtls[Kscript w7.txt[8Pclearscript w7.txt[8Pclearscript w7.txt[8Pclearscript w7.txt[7Pwhoamicat *.h *.cppg++ -o w7 w7.cpp Product.cpp Sale.cpp[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[Cwhoami[Kcat *.h *.cppg++ -std= "c++0x" -o w7 w7.cpp Product.cpp Sale.cpp[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C7]$ g++ -std= "c++0x" -o w7 w7g++ -std="c++0x" -o w7 w7.cpp Product.cpp Sale.cppg++ -std=="c++0x" -o w7 w7.cpp Product.cpp Sale.cpp.cpp Product.cpp Sale.cpp[A[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[Cexit[K
+[K[A[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[Cwhoamicat *.h *.cppg++ -std= "c++0x" -o w7 w7.cpp Product.cpp Sale.cpp[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[14P[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[Cexit[Kwhoamicat *.h *.cppg++ -std="c++0x" -o w7 w7.cpp Product.cpp Sale.cpp[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[Kg++ -std="c++0x" -o w7 w7.cpp Product.cpp Sale.cpp[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[Ccat *.h *.cpp[K[7Pwhoami[2Pexitg++ -o w7 w7.cpp Product.cpp Sale.cpp[14@std= "c++0x" -[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[Ccat *.h *.cpp[K[K[K[K[K[K[K[K[K[K[K[K[K[Kw7 Sales.dat
+Product No      Cost Taxable
+     10012     34.56 
+     10023     45.67 HST
+     10234     12.32 PST
+     10056     67.54 
+     10029     54.12 HST
+     10034     96.30 
+Total    324.47
+
+Press any key to continue ... 
+]0;sjpark24@mtrx-node03pd:~/oop345/w7[sjpark24@mtrx-node03pd w7]$ exit
+exit
+
+Script done on Thu 09 Aug 2018 03:53:54 PM EDT
