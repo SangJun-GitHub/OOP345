@@ -1,0 +1,107 @@
+Script started on Thu 16 Aug 2018 03:58:33 PM EDT
+]0;sjpark24@mtrx-node05pd:~/oop345/a2[?1034h[sjpark24@mtrx-node05pd a2]$ whoami
+sjpark24
+]0;sjpark24@mtrx-node05pd:~/oop345/a2[sjpark24@mtrx-node05pd a2]$ a[Kcat m2.cpp
+/**********************************
+| Subject        : Assignment 2   |
+| Name           : Sang Jun Park  |
+| Student number : 112293170      |
+| Date           : 2018.8.16      |
+**********************************/
+
+#include <algorithm>   
+#include <cmath>       
+#include <cstdlib>     
+#include <iomanip>     
+#include <iostream>    
+#include <numeric>     
+#include <vector>      
+
+using namespace std;
+
+void print(vector<double>& _vector);
+void print(vector<vector<double>>& _matrix);
+void matTranspose(vector<vector<double>>& x, vector<vector<double>>& y);
+void matMult(vector<double>& outcome, vector<vector<double>>& _matrix, vector<double>& _vector);
+
+int main(){
+	auto  sigmoid = [](double x) { return 1. / (1. + exp(-x)); };
+	auto  sigmoid_d = [](double x) { return 1. * (1. - x); };
+	vector<vector<double>> input1 = { { 0, 0, 1 }, { 0, 1, 1 }, { 1, 0, 1 }, { 1, 1, 1 } };
+	vector<double> input2 = { 0, 0, 1, 1 };
+
+	srand(1);
+	vector<double> _vector(input1[0].size());
+	for (auto& _val : _vector) {
+		_val = 2. * rand() / double(RAND_MAX) - 1.;
+	}
+	auto copy = input1;
+	vector<vector<double>> matix;
+	vector<double>  adjustments(_vector.size());
+	vector<double>  outcome(input2.size());
+	vector<double>  outcome_error(input2.size());
+	int maxNum = 7000;
+
+	for (int i= 0; i<maxNum; i++) {
+		matMult(outcome, copy, _vector);
+		for (auto& element : outcome) {
+			element = sigmoid(element);
+		}
+		transform(input2.begin(),input2.end(),outcome.begin(),outcome_error.begin(),
+			[](double y, double outcome) { return y - outcome; });
+		vector<double>  outcome_delta(input2.size());
+		transform(outcome_error.begin(), outcome_error.end(), outcome.begin(), outcome_delta.begin(), 
+			[sigmoid_d](double e, double outcome) { return e * sigmoid_d(outcome); });
+		matMult(adjustments, matix, outcome_delta);
+		transform(adjustments.begin(),adjustments.end(),_vector.begin(),_vector.begin(),[](double a, double s) {return a + s; });
+	}
+
+	cout << "Traning _vector";
+	print(_vector);
+	cout << "Traning _outcome:" << endl;
+	print(outcome);
+
+	getchar();
+}
+
+void print(vector<double>& _vector) {
+	for (auto col : _vector) {
+		cout << setprecision(8) << col << " ";
+	}
+	cout << "\n";
+}
+
+void print(vector<vector<double>>& _matrix) {
+	for (auto row : _matrix) {
+		print(row);
+	}
+}
+void matTranspose(vector<vector<double>>& x, vector<vector<double>>& y) {
+	size_t rows = y.size();
+	size_t cols = y[0].size();
+	x.resize(cols);
+	for (auto& _val : x) {
+		_val.resize(rows);
+	}
+	for (size_t r=0; r<rows; r++) {
+		for (size_t c=0; c<cols; c++) {
+			y[c][r] = x[r][c];
+		}
+	}
+}
+
+void matMult(vector<double>& outcome, vector<vector<double>>& _matrix, vector<double>& _vector) {
+	for (size_t i = 0; i<_matrix.size(); i++) {
+		outcome[i] = inner_product(_matrix[i].begin(), _matrix[i].end(), _vector.begin(), double(0));
+	}
+};
+]0;sjpark24@mtrx-node05pd:~/oop345/a2[sjpark24@mtrx-node05pd a2]$ g++ --std="c++0[5Pcat m2.cpp[4Pwhoami[2Pexit[1Pm2og++ --std="c++11" -o m2o *.cpp[1P *.cpp[C[1P*.cpp[C[1P.cpp .cppm.cpp2.cpp
+]0;sjpark24@mtrx-node05pd:~/oop345/a2[sjpark24@mtrx-node05pd a2]$ m2
+Traning _vector0.68037543 -0.21123415 0.56619845 
+Traning _outcome:
+0.63788552 0.58782089 0.77670622 0.7379498 
+
+]0;sjpark24@mtrx-node05pd:~/oop345/a2[sjpark24@mtrx-node05pd a2]$ exit
+exit
+
+Script done on Thu 16 Aug 2018 03:59:33 PM EDT
