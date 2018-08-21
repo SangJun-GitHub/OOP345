@@ -1,0 +1,12 @@
+Script started on Thu 09 Aug 2018 09:22:31 PM EDT
+]0;sjpark24@mtrx-node01pd:~/m1[?1034h[sjpark24@mtrx-node01pd m1]$ exit[Kwhoham[K[K[K[Koami
+sjpark24
+]0;sjpark24@mtrx-node01pd:~/m1[sjpark24@mtrx-node01pd m1]$ whoami[2Pexitpskill 14952[Kgs++ -std=c++11 -o m1 main.cpp NeuralNetwork.cpp[2@"c++0x"[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[2Pc++11[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C Fu[Kf[K[Kfunctions.cpp 
+]0;sjpark24@mtrx-node01pd:~/m1[sjpark24@mtrx-node01pd m1]$ m1
+Random starting synaptic weights: 0.680375 -0.211234 0.566198 
+New synaptic weights after training: 9.67301 -0.208724 -4.62912 
+Considering new situation [1, 0, 0] -> ?: 0.99993704
+]0;sjpark24@mtrx-node01pd:~/m1[sjpark24@mtrx-node01pd m1]$ exit
+exit
+
+Script done on Thu 09 Aug 2018 09:22:55 PM EDT
