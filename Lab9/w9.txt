@@ -1,0 +1,162 @@
+Script started on Thu 09 Aug 2018 08:05:23 PM EDT
+]0;sjpark24@mtrx-node05pd:~/oop345/w10[?1034h[sjpark24@mtrx-node05pd w10]$ whom[Kami
+sjpark24
+]0;sjpark24@mtrx-node05pd:~/oop345/w10[sjpark24@mtrx-node05pd w10]$ cat SecureDate.cpp
+cat: SecureDate.cpp: No such file or directory
+]0;sjpark24@mtrx-node05pd:~/oop345/w10[sjpark24@mtrx-node05pd w10]$ cat SecureDate.cpp[1P.cppa.cpp
+/**********************************
+| Subject        : Workshop 9     |
+| Name           : Sang Jun Park  |
+| Student number : 112293170      |
+| Date           : 2018.8.09      |
+**********************************/
+#include <iostream>
+#include <fstream>
+#include <string>
+#include "SecureData.h"
+#include <thread>
+namespace w10 {
+
+	void converter(char* t, char key, int n, const Cryptor& c) {
+		for (int i = 0; i < n; i++)
+			t[i] = c(t[i], key);
+	}
+
+	SecureData::SecureData(const char* file, char key) {
+		// open text file
+		std::fstream input(file, std::ios::in);
+		if (!input)
+			throw std::string("\n***Failed to open file ") +
+			std::string(file) + std::string(" ***\n");
+
+		// copy from file into memory
+		nbytes = 0;
+		input >> std::noskipws;
+		while (input.good()) {
+			char c;
+			input >> c;
+			nbytes++;
+		}
+		nbytes--;
+		input.clear();
+		input.seekg(0, std::ios::beg);
+		text = new char[nbytes + 1];
+
+		int i = 0;
+		while (input.good())
+			input >> text[i++];
+		text[--i] = '\0';
+		std::cout << "\n" << nbytes << " bytes copied from text "
+			<< file << " into memory (null byte added)\n";
+		encoded = false;
+
+		// encode using key
+		code(key);
+		std::cout << "Data encrypted in memory\n";
+	}
+
+	SecureData::~SecureData() {
+		delete[] text;
+	}
+
+	void SecureData::display(std::ostream& os) const {
+		if (text && !encoded)
+			os << text << std::endl;
+		else if (encoded)
+			throw std::string("\n***Data is encoded***\n");
+		else
+			throw std::string("\n***No data stored***\n");
+	}
+
+	void SecureData::code(char key) {
+		std::thread t1(converter, text, key, nbytes, Cryptor());
+
+		t1.join();
+		encoded = !encoded;
+	}
+
+	void SecureData::backup(const char* file) {
+		if (!text)
+			throw std::string("\n***No data stored***\n");
+		else if (!encoded)
+			throw std::string("\n***Data is not encoded***\n");
+		else {
+			std::ofstream output; output.open(file);
+			output << text; output.close();
+		}
+	}
+
+	void SecureData::restore(const char* file, char key) {
+		std::ifstream is(file, std::ios::in);
+
+		nbytes = 0;
+		is >> std::noskipws;
+		while (is.good()) {
+			char c; is >> c; ++nbytes;
+		}
+		--nbytes;
+		is.clear();
+		is.seekg(0, 
+			std::ios::beg);
+		text = new char[nbytes + 1];
+
+		int track = 0;
+		while (is.good()) {
+			is >> text[track++];
+		}
+		
+		text[track--] = '\0';
+
+		std::cout << "\n" 
+			<< nbytes + 1 
+			<< " bytes copied from binary file "
+			<< file 
+			<< " into memory (null byte included)\n";
+		encoded = true;
+
+		// decode using key
+		code(key);
+		std::cout << "Data decrypted in memory\n\n";
+
+		is.close();
+	}
+
+	std::ostream& operator<<(std::ostream& os, const SecureData& sd) {
+		sd.display(os);
+		return os;
+	}
+}]0;sjpark24@mtrx-node05pd:~/oop345/w10[sjpark24@mtrx-node05pd w10]$ g++ -std="c++[K[K[K[K"c+11" -pthr[K[Khread -o w10 w10s.[K[K.cpp SecureData..cpp 
+g++: error: unrecognized command line option ‘-std=c+11’
+]0;sjpark24@mtrx-node05pd:~/oop345/w10[sjpark24@mtrx-node05pd w10]$ g++ -std="c+11" -pthread -o w10 w10.cpp SecureData..cpp [A[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C=c+11" -pthread -o w10 w10.cpp SecureData[1@.[A[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[Cc+11" -pthread -o w10 w10.cpp SecureData.[1P[A[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[Cc+11" -pthread -o w10 w10.cpp SecureData.c[1P[A[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C -pthread -o w10 w10.cpp SecureData.cp[C[1P [A[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C+11 -pthread -o w10 w10.cpp SecureData.c[Cp [A[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C
+
+]0;sjpark24@mtrx-node05pd:~/oop345/w10[sjpark24@mtrx-node05pd w10]$ w10 w10_text.dat encoded.dat %
+
+Command Line : w10 w10_text.dat encoded.dat % 
+
+950 bytes copied from text w10_text.dat into memory (null byte added)
+Data encrypted in memory
+
+951 bytes copied from binary file encoded.dat into memory (null byte included)
+Data decrypted in memory
+
+ Compound types are types that a programmer constructs from a language's
+ fundamental types and/or other compound types.  In C++11, compound types 
+ include pointers and references to existing types, enumerations of named 
+ constant values, arrays of objects of an existing type, classes and function
+ types.  C++11 clarified the difference between lvalues and rvalues and 
+ references to each, which helped simplify many of the facilities available
+ in the standard library.
+
+ This chapter describes the non-function types in detail.  The description 
+ includes a review of one-dimensional arrays in both static and dynamic memory
+ and shows how to allocate multi-dimensional arrays in both static and dynamic
+ memory.  The description of classes reviews class definitions, introduces
+ move-constructors and move-assignment operators and includes declarations of
+ special members such as bit fields, class variables and class functions.
+
+
+Press any key to continue ... 
+]0;sjpark24@mtrx-node05pd:~/oop345/w10[sjpark24@mtrx-node05pd w10]$ exit
+exit
+
+Script done on Thu 09 Aug 2018 08:07:37 PM EDT
